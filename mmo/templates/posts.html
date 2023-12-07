@@ -1,0 +1,104 @@
+{% extends 'flatpages/default.html' %}
+{% block title %}
+posts
+{% endblock title%} 
+
+{% block content %}
+    <h1>Все посты</h1>
+
+    <h3>{{ posts|length }}</h3>
+    {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+    <form action="" method="get">
+        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+        {{ filterset.form.as_p }}
+        {# Добавим кнопку отправки данных формы #}
+        <input type="submit" value="Найти" />
+    </form> 
+
+    <hr>
+    {# Теперь будем проверять не request.user.is_authenticated, а конкретные права #}
+    {% if perms.simpleapp.add_post %}
+    <a href="{% url 'post_create' %}">Добавить товар</a>
+    {% endif %}
+
+    {% if posts %}
+        <table>
+            <tr>
+                <td>Заголовок</td>
+                <td>Дата публикации</td>
+                <td>Текст</td>
+                <td>Категория</td>
+                <td>Рейтинг</td>
+
+                {% if perms.simpleapp.change_post or perms.simpleapp.delete_post %}
+                <td>Действия</td>
+                {% endif %}
+
+            </tr>
+        
+            <!-- Для каждого товара будете генерироваться новая строчка,
+            т.е. новый HTML код, который указан в теле цикла.
+            При этом сам цикл работает точно так же, как и в Python.
+            product — переменная цикла, т.е. наш товар полученный из списка -->
+            {% for post in posts %}
+            <tr>
+                <!-- Не забываем, что переменные в шаблоне ничем не отличаются
+                от переменных в Python. Здесь также можно получать доступ к
+                полям объекта модели. Например, здесь мы выводим имя,
+                в следующем столбце описание, и т.д.  -->
+                <td>{{ post.title }}</td>
+                <td>{{ post.dateCreation|date:'M d Y' }}</td>
+                <td>{{ post.text|truncatewords:20 }}</td>
+                <td>
+                    {% for posts in post.postCategory.all %}
+                        {{ posts.name }}
+                    {% endfor %} 
+                </td>
+                <td>
+                    {# А здесь доступ для каждой ссылки теперь будем проверять отдельно #}
+                    {% if perms.simpleapp.change_post %}
+                    <a href="{% url 'post_update' pk=post.id %}">Изменить</a>
+                    {% endif %}
+                    {% if perms.simpleapp.delete_post %}
+                    <a href="{% url 'post_delete' post.id %}">Удалить</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    {% else %}
+        <h2> Постов нет <h2>
+    {% endif %}
+
+    {% if page_obj.previous_page_number == 1 %}
+    <a href="?page=1">1</a>
+    {% endif %}
+    {% if page_obj.previous_page_number != 1 %}
+    <a href="?page=1">
+        Начало
+    </a>
+    ...
+    <a href="?page={{ page_obj.previous_page_number }}">
+        {{ page_obj.previous_page_number }}
+    </a>
+
+    {% endif %}
+
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">
+            {{ page_obj.next_page_number }}
+        </a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?page={{ paginator.num_page }}">
+                Конец
+            </a>
+        {% endif %}
+    {% endif %}
+
+{% endblock content%}
+</body>
+</html>
