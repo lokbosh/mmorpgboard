@@ -1,6 +1,6 @@
 from django.db import models     
 from django.contrib.auth.models import User
-
+from django.urls import reverse
 
 
 class Player(models.Model):
@@ -41,8 +41,12 @@ class Post(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
     title = models.CharField(max_length=128)
     
+    
+    
     def __str__(self):
-        return f'{self.title[:]}: {self.text[:20]}'
+        return f'{self.title[:]}:'
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
     
 class Response(models.Model):
     dateCreation = models.DateTimeField(auto_now_add=True)

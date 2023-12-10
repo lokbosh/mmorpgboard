@@ -24,15 +24,15 @@ Post
                 от переменных в Python. Здесь также можно получать доступ к
                 полям объекта модели. Например, здесь мы выводим имя,
                 в следующем столбце описание, и т.д.  -->
-                <td>{{ Post.title }}</td>
-                <td>{{ Post.dateCreation|date:'M d Y' }}</td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.dateCreation|date:'M d Y' }}</td>
                 <td>{{ Post.text }}</td>
                 <td>
-                    {% for news in new.postCategory.all %}
-                         {{ news.name }}
+                    {% for posts in post.category.all %}
+                         {{ post.name }}
                      {% endfor %} 
                  </td>
-                <td>{{ Post.category }}</td>
+                <td>{{ post.category }}</td>
             </tr>
             
 

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post,Response
 from django.core.exceptions import ValidationError
 
 
@@ -18,3 +18,9 @@ class PostForm(forms.ModelForm):
                 "Текст не должно быть идентично названию."
             )
         return cleaned_data
+    
+class ResponseForm(forms.ModelForm):
+    class Meta:
+        model = Response
+        fields = ['text']
+        widgets = {'res_user': forms.HiddenInput()}
