@@ -8,7 +8,7 @@ posts
 
     <h3>Всего новостей:{{ Posts|length }}</h3>
     
-    <a href="search" class="btn">Поиск</a>
+    
     <hr>
     {# Теперь будем проверять не request.user.is_authenticated, а конкретные права #}
     {% if perms.simpleapp.add_post %}
