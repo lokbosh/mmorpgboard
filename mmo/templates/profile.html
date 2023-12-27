@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+<h1>Профиль</h1>
+ 
+{% if responses %}
+<table>
+    <tr>
+        <td>Автор поста</td>
+        <td>Текст</td>
+        <td>Автор запроса</td>
+        <td>Текст запроса</td>
+        <td>Категория</td>
+        
+
+    </tr>
+    {% for response in responses %}
+        <tr>
+            <td>{{ response.post.author.username }}</td>
+            <td>{{ response.post.text }}</td>
+            <td>{{ response.author }}</td>
+            <td>{{ response.text }}</td>
+            <td>{{ response.post.category }}</td>
+        </tr>
+    {% endfor %}
+{% endif %}
+{% endblock content %}
+    

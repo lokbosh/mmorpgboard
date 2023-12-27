@@ -5,7 +5,7 @@ Post
 
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+
 {% block content %}
 <table>
             <tr>
@@ -15,16 +15,10 @@ Post
                 <td>Категория</td>
             </tr>
         
-            <!-- Для каждого товара будете генерироваться новая строчка,
-            т.е. новый HTML код, который указан в теле цикла.
-            При этом сам цикл работает точно так же, как и в Python.
-            product — переменная цикла, т.е. наш товар полученный из списка -->
+            
         
             <tr>
-                <!-- Не забываем, что переменные в шаблоне ничем не отличаются
-                от переменных в Python. Здесь также можно получать доступ к
-                полям объекта модели. Например, здесь мы выводим имя,
-                в следующем столбце описание, и т.д.  -->
+                
                 <td>{{ post.title }}</td>
                 <td>{{ post.dateCreation|date:'M d Y' }}</td>
                 <td>{{ Post.text }}</td>
@@ -38,5 +32,26 @@ Post
             
 
         </table>
-    
+        <h3>Создать отклик</h3>
+        <form action="{% url 'response_create' post.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+            <input type="submit" value="Откликнутся">
+        </form>
+        {% if responses %}
+        <h3>Все отклики</h3>
+        <table>
+            <tr>
+                <td>Автор</td>
+                <td>Содержание отклика</td>
+            </tr>
+        {% for response in responses %}
+            
+            <tr>
+                <td>{{ response.author }}</td>
+                <td>{{ response.text }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% endif %}
 {% endblock content %}

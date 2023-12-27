@@ -23,4 +23,7 @@ class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
         fields = ['text']
-        widgets = {'res_user': forms.HiddenInput()}
+        labels = ['Response']
+        
+        widgets = {'text':forms.Textarea(attrs={'rows':5,'cols':70,'placeholder':'Введите текст отклика'})}
+        

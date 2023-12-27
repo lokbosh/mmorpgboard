@@ -5,12 +5,7 @@ posts
     
 {% block content %}
     <h1>Все посты</h1>
-    <form action="" method="get">
-        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
-        {{ filterset.form.as_p }}
-        {# Добавим кнопку отправки данных формы #}
-        <input type="submit" value="Найти" />
-    </form> 
+
     <h3>Всего новостей:{{ Posts|length }}</h3>
     
         
@@ -35,6 +30,10 @@ posts
             {% for post in posts %}
             <tr>
                 <td>{{ post.title }}</td>
+                <td>
+                    {% for posts in post.category.all %}
+                        <a href='{% url "category_list" %}'>{{ post.name }}</a>
+                    {% endfor %}
                 <td>{{ post.dateCreation|date:'M d Y' }}</td>
                 <td>{{post.category}}</td>
                 <td>
