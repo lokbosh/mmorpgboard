@@ -16,6 +16,10 @@
             <div class="container">
                 <a class="navbar-brand" href="http://127.0.0.1:8000/posts/">MMORPG</a>
                 <a class="button" href="http://127.0.0.1:8000/posts/profile">Profile</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Выход из профиля</button>
+                  </form>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarResponsive"
                         aria-controls="navbarResponsive" aria-expanded="false"

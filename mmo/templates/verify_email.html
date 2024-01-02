@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends 'flatpages/default.html' %}
+<html lang="en">
+<head>
+    <title>Подтверждение почты</title>
+</head>
+<body>
+    <h2>Введите код верификации, отправленный на вашу почту:</h2>
+    <form method="post" action="{% url 'verify_email' %}">
+        {% csrf_token %}
+        <label for="verification_code">Код верификации:</label>
+        <input type="text" id="verification_code" name="verification_code" required>
+        <button type="submit">Подтвердить</button>
+    </form>
+</body>
+</html>

@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.http import HttpResponseBadRequest
 from .filters import PostFilter
+import secrets
+from django.contrib import messages
 class PostList(ListView):
     raise_exception = True   
     model = Post
@@ -112,7 +114,34 @@ def response_status(request, response_id, action):
 
         
     
+@login_required
+def request_verification(request):
+    # Генерация кода верификации
+    verification_code = secrets.token_urlsafe(6)
     
+    # Сохранение кода в сеансе Django
+    request.session['verification_code'] = verification_code
+
+    # Здесь должна быть логика отправки кода на почту, но мы пропускаем это для примера
+
+    return render(request, 'verification_request.html')
+
+@login_required
+
+def verify_email(request):
+    stored_code = request.session.get('verification_code')
+
+    if request.method == 'POST':
+        entered_code = request.POST.get('verification_code')
+
+        if entered_code == stored_code:
+            request.session['email_verified'] = True
+            messages.success(request, 'Ваш аккаунт успешно верифицирован.')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Неверный код верификации.')
+
+    return render(request, 'verify_email.html')
         
     
     

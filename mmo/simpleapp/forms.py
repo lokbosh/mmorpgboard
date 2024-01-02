@@ -1,7 +1,7 @@
 from django import forms
 from .models import Post,Response
 from django.core.exceptions import ValidationError
-
+from django.core.mail import send_mail
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -27,3 +27,12 @@ class ResponseForm(forms.ModelForm):
         
         widgets = {'text':forms.Textarea(attrs={'rows':5,'cols':70,'placeholder':'Введите текст отклика'})}
         
+def send_verification_code(user, verification_code):
+    subject = 'Подтверждение аккаунта'
+    message = f'Ваш код подтверждения: {verification_code}'
+    from_email = 'lokbosh@yandex.ru'  
+    recipient_list = [user.email]
+
+    send_mail(subject, message, from_email, recipient_list)
+
+
