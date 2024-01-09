@@ -1,5 +1,6 @@
 from typing import Any
-from django.db.models.query import QuerySet
+from django.core.mail import send_mail
+from django.conf import settings
 from django.shortcuts import render,get_object_or_404,redirect
 from .models import Post,Response
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
@@ -8,9 +9,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpResponseBadRequest
 from .filters import PostFilter
-import secrets
 from django.contrib import messages
 class PostList(ListView):
     raise_exception = True   
@@ -38,7 +37,7 @@ class PostList(ListView):
        # Возвращаем из функции отфильтрованный список товаров
        return self.filterset.qs
         
-class PostResponseCreate(PermissionRequiredMixin,CreateView):
+class PostResponseCreate(CreateView):
     raise_exception = True 
     model = Response
     template_name = 'post.html'
@@ -73,14 +72,14 @@ class PostCreate(CreateView):
     model = Post
     template_name = 'post_edit.html'
     
-class PostUpdate(PermissionRequiredMixin,UpdateView):
+class PostUpdate(UpdateView):
     raise_exception = True
     permission_required = ('simpleapp.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
     
-class PostDelete(PermissionRequiredMixin,DeleteView):
+class PostDelete(DeleteView):
     raise_exception = True
     permission_required = ('simpleapp.delete_posts',)
     model = Post
@@ -92,57 +91,64 @@ def profile(request):
     posts = Post.objects.filter(author=request.user)
     responses = Response.objects.filter(post__in=posts)
     profile_post_id = request.GET.get('post_id')
+    category_filter = request.GET.get('category')
     if profile_post_id:
         responses = responses.filter(post_id=profile_post_id)
-
-    return render(request, 'profile.html', {'profile': profile, 'responses': responses})
+    if category_filter:
+        responses = responses.filter(post__category=category_filter)
+    return render(request, 'profile.html', {'user': request.user, 'responses': responses})
 
 @login_required
-def response_status(request, response_id, action):
+def accept_request(request, response_id):
     response = get_object_or_404(Response, id=response_id)
-    if action == 'accept':
-        response.status = 'accepted'
-        subject = 'Ваш запрос принят'
-    elif action == 'reject':
-        response.status = 'rejected'
-        subject = 'Ваш запрос отклонен'
-    else:
-        return HttpResponseBadRequest('Недопустимое действие')
 
+    if request.user != response.post.author:
+        messages.error(request, 'Недостаточно прав для выполнения этого действия.')
+        return redirect('profile')
+
+    if response.status != 'undefined':
+        messages.error(request, 'Этот запрос уже обработан.')
+        return redirect('profile')
+
+    response.status = 'accepted'
     response.save()
-    return redirect('post', post_id=response.post.id)
 
-        
-    
-@login_required
-def request_verification(request):
-    # Генерация кода верификации
-    verification_code = secrets.token_urlsafe(6)
-    
-    # Сохранение кода в сеансе Django
-    request.session['verification_code'] = verification_code
+    subject = f'Ваш запрос принят'
+    message = f'Ваш запрос на объявление "{response.post.title}" был принят.'
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [response.author.email]
 
-    # Здесь должна быть логика отправки кода на почту, но мы пропускаем это для примера
+    send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
-    return render(request, 'verification_request.html')
+    messages.success(request, 'Запрос успешно принят.')
+    return redirect('profile')
 
 @login_required
+def reject_request(request, response_id):
+    response = get_object_or_404(Response, id=response_id)
 
-def verify_email(request):
-    stored_code = request.session.get('verification_code')
+    if request.user != response.post.author:
+        messages.error(request, 'Недостаточно прав для выполнения этого действия.')
+        return redirect('profile')
 
-    if request.method == 'POST':
-        entered_code = request.POST.get('verification_code')
+    if response.status != 'undefined':
+        messages.error(request, 'Этот запрос уже обработан.')
+        return redirect('profile')
 
-        if entered_code == stored_code:
-            request.session['email_verified'] = True
-            messages.success(request, 'Ваш аккаунт успешно верифицирован.')
-            return redirect('profile')
-        else:
-            messages.error(request, 'Неверный код верификации.')
+    response.status = 'rejected'
+    response.save()
 
-    return render(request, 'verify_email.html')
-        
+    subject = f'Ваш запрос отклонен'
+    message = f'Ваш запрос на объявление "{response.post.title}" был отклонен.'
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [response.author.email]
+
+    send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+
+    messages.success(request, 'Запрос успешно отклонен.')
+    return redirect('profile')
+    
+
     
     
     

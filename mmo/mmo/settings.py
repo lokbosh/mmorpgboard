@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'simpleapp',
+    'ckeditor',
+    'ckeditor_uploader',
     
 ]
 
@@ -150,8 +152,21 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Image', 'Table', 'HorizontalRule'],
+            ['Link', 'Unlink'],
+            ['codesnippet'],
+        ],
+        'extraPlugins': ','.join(['codesnippet', 'image2', 'uploadimage']),
+    },
+}
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 

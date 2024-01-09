@@ -1,27 +1,64 @@
 {% extends 'flatpages/default.html' %}
 {% block content %}
 <h1>Профиль</h1>
- 
+
+<form method="get">
+    <label for="category">Фильтр по категории:</label>
+    <select name="category" id="category">
+        <option value="">Все категории</option>
+        <option value="{{ Post.tanks }}">Танки</option>
+        <option value="{{ Post.heals }}">Хилы</option>
+        <option value="{{ Post.damage_dealers }}">Дамагеры</option>
+        <option value="{{ Post.vendors }}">Торговцы</option>
+        <option value="{{ Post.guildmasters }}">Гильдмастера</option>
+        <option value="{{ Post.quest_giver }}">Квестгиверы</option>
+        <option value="{{ Post.smiths }}">Кузнецы</option>
+        <option value="{{ Post.skinners }}">Кожевники</option>
+        <option value="{{ Post.potion_masters }}">Зельевары</option>
+        <option value="{{ Post.enchanters }}">Мастера заклинаний</option>
+    </select>
+    <button type="submit">Применить фильтр</button>
+</form>
+
 {% if responses %}
 <table>
     <tr>
         <td>Автор поста</td>
-        <td>Текст</td>
+        <td>Текст поста</td>
         <td>Автор запроса</td>
         <td>Текст запроса</td>
         <td>Категория</td>
-        
-
+        <td>Действия</td>
     </tr>
     {% for response in responses %}
         <tr>
             <td>{{ response.post.author.username }}</td>
-            <td>{{ response.post.text }}</td>
+            <td>{{ response.post.text|safe }}</td>
             <td>{{ response.author }}</td>
             <td>{{ response.text }}</td>
-            <td>{{ response.post.category }}</td>
+            <td>{{ response.post.get_category_display }}</td>
+            <td>
+                {% if response.status == 'undefined' %}
+                    <form method="post" action="{% url 'accept_request' response.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Принять</button>
+                    </form>
+                    <form method="post" action="{% url 'reject_request' response.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Отклонить</button>
+                    </form>
+                {% else %}
+                    <span style="color: {% if response.status == 'accepted' %}green{% elif response.status == 'rejected' %}red{% endif %};">
+                        {% if response.status == 'accepted' %}
+                            Запрос принят
+                        {% elif response.status == 'rejected' %}
+                            Запрос отклонен
+                        {% endif %}
+                    </span>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
+</table>
 {% endif %}
 {% endblock content %}
-    

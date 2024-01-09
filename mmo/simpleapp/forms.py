@@ -1,13 +1,16 @@
 from django import forms
 from .models import Post,Response
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from ckeditor.widgets import CKEditorWidget
+
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = '__all__'
-        text = forms.CharField(min_length=2)
+        widgets = {
+            'text': CKEditorWidget(),
+        }
     def clean(self):
         cleaned_data = super().clean()
         text = cleaned_data.get("text")
@@ -19,6 +22,7 @@ class PostForm(forms.ModelForm):
             )
         return cleaned_data
     
+    
 class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
@@ -27,12 +31,5 @@ class ResponseForm(forms.ModelForm):
         
         widgets = {'text':forms.Textarea(attrs={'rows':5,'cols':70,'placeholder':'Введите текст отклика'})}
         
-def send_verification_code(user, verification_code):
-    subject = 'Подтверждение аккаунта'
-    message = f'Ваш код подтверждения: {verification_code}'
-    from_email = 'lokbosh@yandex.ru'  
-    recipient_list = [user.email]
-
-    send_mail(subject, message, from_email, recipient_list)
 
 

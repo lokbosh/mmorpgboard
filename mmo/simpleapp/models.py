@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.db import models     
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -22,7 +23,7 @@ class Post(models.Model):
         (quest_giver,'Квестгиверы'),(smiths,'Кузнецы'),(skinners,'Кожевники'),(potion_masters,'Зельевары'),(enchanters,'Мастера заклинаний')
     )
     author = models.ForeignKey(User,on_delete=models.CASCADE)
-    text = models.TextField(max_length=128)
+    text = RichTextField()
     category = models.CharField(max_length=2,choices=CATEGORY_CHOICES,default=tanks)
     dateCreation = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=128)
@@ -44,7 +45,7 @@ class Response(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     text = models.TextField(max_length=128,)
-    status = models.BooleanField(max_length=10, choices=STATUS, default='undefined')
+    status = models.CharField(max_length=10, choices=STATUS, default='undefined')
 
     
 
