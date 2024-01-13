@@ -23,6 +23,7 @@ posts
                 <td>Заголовок</td>
                 <td>Дата публикации</td>
                 <td>Категория</td>
+                <td>Содержание</td>
             
 
                 {% if perms.simpleapp.change_post or perms.simpleapp.delete_post %}
@@ -43,6 +44,7 @@ posts
                     <a href="{% url 'post_delete' post.id %}">Удалить</a>
                     {% endif %}
                 </td>
+                <td>{{post.text|safe}}</td>
             </tr>
             {% endfor %}
 
