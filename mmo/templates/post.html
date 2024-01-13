@@ -21,7 +21,7 @@ Post
                 
                 <td>{{ post.title }}</td>
                 <td>{{ post.dateCreation|date:'M d Y' }}</td>
-                <td>{{ Post.text }}</td>
+                <td>{{ post.text }}</td>
                 <td>
                     {% for posts in post.category.all %}
                          {{ post.name }}

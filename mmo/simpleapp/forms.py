@@ -1,7 +1,7 @@
 from django import forms
 from .models import Post,Response
 from django.core.exceptions import ValidationError
-from ckeditor.widgets import CKEditorWidget
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
 class PostForm(forms.ModelForm):
@@ -9,7 +9,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = '__all__'
         widgets = {
-            'text': CKEditorWidget(),
+            'text': CKEditorUploadingWidget(),
         }
     def clean(self):
         cleaned_data = super().clean()
@@ -27,9 +27,10 @@ class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
         fields = ['text']
-        labels = ['Response']
-        
-        widgets = {'text':forms.Textarea(attrs={'rows':5,'cols':70,'placeholder':'Введите текст отклика'})}
+        labels = {'text': 'Response'}
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'placeholder': 'Введите текст отклика'})
+            }
         
 
 

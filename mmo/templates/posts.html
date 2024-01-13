@@ -6,9 +6,7 @@ posts
 {% block content %}
     <h1>Все посты</h1>
     <form action="" method="get">
-        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
         {{ filterset.form.as_p }}
-        {# Добавим кнопку отправки данных формы #}
         <input type="submit" value="Найти" />
     </form> 
     <h3>Всего новостей:{{ Posts|length }}</h3>

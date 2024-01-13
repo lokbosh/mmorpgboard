@@ -130,9 +130,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-STATICFILES_DIRS = [
-    BASE_DIR / "static"
-]
+
+
 LOGIN_REDIRECT_URL = '/posts'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 # Password validation
@@ -154,17 +153,23 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 CKEDITOR_CONFIGS = {
     'default': {
+        'autoParagraph': False,
         'toolbar': 'Custom',
         'toolbar_Custom': [
-            ['Image', 'Table', 'HorizontalRule'],
+            ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote'],
             ['Link', 'Unlink'],
-            ['codesnippet'],
+            ['Image', 'Table', 'HorizontalRule', 'Smiley'],
+            ['Format', 'FontSize', 'TextColor', 'BGColor'],
+            ['Maximize'],
         ],
-        'extraPlugins': ','.join(['codesnippet', 'image2', 'uploadimage']),
+        'width': 700,  
+        'height': 300,  
+        'autoGrow_bottomSpace': 10,
+        'autoGrow_minHeight': 300,
     },
 }
 CKEDITOR_UPLOAD_PATH = 'uploads/'
-CKEDITOR_IMAGE_BACKEND = 'pillow'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Internationalization
@@ -179,10 +184,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = 'static/'
+STATIC_DIR = os.path.join(BASE_DIR,'static')
+STATICFILES_DIR = [STATIC_DIR]
+# STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

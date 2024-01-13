@@ -67,21 +67,18 @@ class PostDetail(DetailView,PostResponseCreate):
         
 class PostCreate(CreateView):
     raise_exception = True
-    permission_required = ('simpleapp.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
     
 class PostUpdate(UpdateView):
     raise_exception = True
-    permission_required = ('simpleapp.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
     
 class PostDelete(DeleteView):
     raise_exception = True
-    permission_required = ('simpleapp.delete_posts',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('posts')
